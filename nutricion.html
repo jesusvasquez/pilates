@@ -35,9 +35,9 @@
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="./index.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent active">Hoy</a>
+                        <a href="./index.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Hoy</a>
                         <a href="./ejercicio.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Ejercicio</a>
-                        <a href="./nutricion.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Nutrición</a>
+                        <a href="./nutricion.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent active">Nutrición</a>
                         <a href="./consejos.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Consejos</a>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="./index.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Hoy</a>
                 <a href="./ejercicio.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Ejercicio</a>
-                <a href="./nutricion.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Nutrición</a>
+                <a href="./nutricion.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium active">Nutrición</a>
                 <a href="./consejos.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Consejos</a>
             </div>
         </div>
@@ -80,8 +80,8 @@
 
     <footer class="bg-blue-900 text-white mt-16">
         <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-sm"><b>Plan de Bienestar Integral.</b><em> Un viaje hacia una vida más saludable.</em></p>
-            <p class="text-sm">Creado por Jesús Antonio Vásquez Córdova | <a class="hover:text-yellow-400" href="./LICENSE">Licencia GPL-3</a></p>
+            <p class="text-xs lg:text-sm"><b>Plan de Bienestar Integral.</b><em> Un viaje hacia una vida más saludable.</em></p>
+            <p class="text-xs lg:text-sm">Creado por Jesús Antonio Vásquez Córdova | <a class="hover:text-yellow-400" href="./LICENSE">Licencia GPL-3</a></p>
             <p class="text-xs mt-2 opacity-70">Este plan es solamente una guía y no sustituye el consejo médico profesional.</p>
         </div>
     </footer>
@@ -91,7 +91,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // --- DATA ---
     const mealData = {
-        'Desayuno (4:30 AM)': [{ name: 'Avena Nocturna', desc: 'Avena, leche, semillas de chía, bayas y nueces. Preparar la noche anterior.'}, { name: 'Huevos Cocidos y Fruta', desc: '1-2 huevos duros (preparados con antelación) con una rebanada de pan integral y una manzana.'}, { name: 'Batido de Proteínas', desc: 'Proteína en polvo, espinacas, media banana y un puñado de bayas.'}, { name: 'Yogur Griego', desc: 'Yogur griego natural con bayas y un puñado de almendras.'}],
+        'Desayuno (4:30 AM)': [{ name: 'Avena Nocturna', desc: 'Avena, leche, semillas de chía, bayas y nueces. Preparar la noche anterior.', link: 'https://www.youtube.com/watch?v=r0z4wmzoDII'}, { name: 'Huevos Cocidos y Fruta', desc: '1-2 huevos duros (preparados con antelación) con una rebanada de pan integral y una manzana.', link: 'https://www.youtube.com/watch?v=Hwm5QVWSlSA'}, { name: 'Batido de Proteínas', desc: 'Proteína en polvo, espinacas, media banana y un puñado de bayas.', link: 'https://www.youtube.com/watch?v=aPgWyk93gxA'}, { name: 'Yogur Griego', desc: 'Yogur griego natural con bayas y un puñado de almendras.', link: 'https://www.youtube.com/watch?v=yvAdWtgPrdc'}],
         'Almuerzo (12:30 PM)': [{ name: 'Ensalada en Frasco', desc: 'Capas de aderezo, quinoa, pollo desmenuzado o garbanzos y verduras frescas.'}, { name: 'Plato de Quinoa Preparado', desc: 'Recetas de una sola olla con pollo, brócoli y quinoa. Ideal para recalentar.'}, { name: 'Wrap Integral', desc: 'Tortilla integral con hummus, pavo o pollo y muchas verduras ralladas.'}, { name: 'Sopa de Lentejas', desc: 'Nutritiva y fácil de transportar en un termo.'}],
         'Cena (6:30 PM)': [{ name: 'Salmón al Horno', desc: 'Con una porción generosa de brócoli y espárragos asados.'}, { name: 'Revuelto de Tofu', desc: 'Tofu con una variedad de verduras coloridas y salsa ligera de soja.'}, { name: 'Ensalada de Quinoa y Garbanzos', desc: 'Con aguacate, tomates y aderezo de limón y aceite de oliva.'}, { name: 'Pechuga de Pollo a la Parrilla', desc: 'Acompañada de un camote mediano asado.'}],
         'Snacks Inteligentes': [{ name: 'Yogur Griego', desc: 'Una taza con bayas frescas.'}, { name: 'Puñado de Almendras', desc: 'Aproximadamente 23 almendras.'}, { name: 'Vegetales con Hummus', desc: 'Bastones de zanahoria o pepino con 2 cucharadas de hummus.'}, { name: 'Huevo Duro', desc: 'Fácil de preparar con antelación.'}]
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Object.entries(mealData).forEach(([mealType, options]) => {
              const item = document.createElement('div');
              item.className = 'border-t border-stone-200 first:border-t-0';
-             item.innerHTML = `<button class="accordion-button w-full flex justify-between items-center p-4 text-left font-semibold text-blue-800 hover:bg-blue-50 focus:outline-none"><span>${mealType}</span><svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><div class="accordion-content hidden p-4 pt-0 text-sm text-stone-600"><ul class="space-y-2 list-disc list-inside">${options.map(o => `<li><strong>${o.name}:</strong> ${o.desc}</li>`).join('')}</ul></div>`;
+             item.innerHTML = `<button class="accordion-button w-full flex justify-between items-center p-4 text-left font-semibold text-blue-800 hover:bg-blue-50 focus:outline-none"><span>${mealType}</span><svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><div class="accordion-content hidden p-4 pt-0 text-sm text-stone-600"><ul class="space-y-2 list-disc list-inside">${options.map(o => `<li><strong>${o.name}:</strong> ${o.desc} <br>| <a class="text-blue-800 hover:text-blue-400" href="${o.link}">Receta</a> |</li>`).join('')}</ul></div>`;
              accordionContainer.appendChild(item);
         });
     }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function createMacroChart() {
         const ctx = document.getElementById('macroChart').getContext('2d');
-        new Chart(ctx, { type: 'doughnut', data: { labels: ['Carbohidratos', 'Proteínas', 'Grasas Saludables'], datasets: [{ data: [45, 30, 25], backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)'], borderColor: ['#ffffff'], borderWidth: 3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 14 } } }, tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } } }, cutout: '60%' } });
+        new Chart(ctx, { type: 'doughnut', data: { labels: ['Carbohidratos (45%)', 'Proteínas (30%)', 'Grasas Saludables (25%)'], datasets: [{ data: [45, 30, 25], backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)'], borderColor: ['#ffffff'], borderWidth: 3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 14 } } }, tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } } }, cutout: '50%' } });
     }
 
     function initMobileMenu() {
