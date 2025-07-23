@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -428,3 +429,408 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Bienestar</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FDFBF8; }
+        .nav-link.active { color: #1e40af; font-weight: 600; border-bottom-color: #1e40af; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .task-checkbox { appearance: none; background-color: #fff; margin: 0; font: inherit; color: currentColor; width: 1.15em; height: 1.15em; border: 0.15em solid currentColor; border-radius: 0.25em; transform: translateY(-0.075em); display: grid; place-content: center; cursor: pointer; }
+        .task-checkbox::before { content: ""; width: 0.65em; height: 0.65em; transform: scale(0); transition: 120ms transform ease-in-out; box-shadow: inset 1em 1em #1e40af; transform-origin: bottom left; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
+        .task-checkbox:checked::before { transform: scale(1); }
+        .calendar-day { aspect-ratio: 1/1; }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="./index.html" class="flex items-center gap-3">
+                        <img src="./bienestar.png" alt="Bienestar Integral Logo" class="h-8 w-8 rounded-full">
+                        <h1 class="text-xl font-bold text-blue-900">Bienestar Integral</h1>
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="./index.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent active">Panel de Hoy</a>
+                        <a href="./ejercicio.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Plan de Ejercicio</a>
+                        <a href="./nutricion.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Plan de Nutrición</a>
+                        <a href="./consejos.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Consejos</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-stone-600">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="./index.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Panel de Hoy</a>
+                <a href="./ejercicio.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Plan de Ejercicio</a>
+                <a href="./nutricion.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Plan de Nutrición</a>
+                <a href="./consejos.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Consejos</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="hoy">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">Panel de Hoy</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">Marca tus tareas completadas. ¡Tu progreso se guarda automáticamente!</p>
+                <p id="today-date" class="font-semibold text-blue-800 mt-2"></p>
+            </div>
+            <div id="daily-plan-container" class="space-y-8"></div>
+        </section>
+
+        <hr class="my-16 border-stone-200">
+
+        <section id="seguimiento">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">Mi Progreso</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">Visualiza tu consistencia y celebra tus logros.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-blue-900 mb-4 text-center" id="calendar-title">Calendario de Adherencia</h3>
+                    <div id="progress-calendar" class="mt-4"></div>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <h4 class="text-lg font-semibold text-blue-900">Racha Actual</h4>
+                        <p class="text-5xl font-bold text-emerald-500 mt-2" id="streak-stat">0</p>
+                        <p class="text-sm text-stone-500">días seguidos completados</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <h4 class="text-lg font-semibold text-blue-900">Completado (Últimos 7 Días)</h4>
+                        <p class="text-5xl font-bold text-amber-500 mt-2" id="weekly-completion-stat">0%</p>
+                        <p class="text-sm text-stone-500">de las tareas</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h4 class="text-lg font-semibold text-blue-900 mb-3 text-center">Herramientas</h4>
+                        <button id="export-csv-button" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">Exportar Progreso a CSV</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-blue-900 text-white mt-16">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm">Plan de Bienestar Integral &copy; 2025 por Jesús A. Vásquez C. Un viaje hacia una vida más saludable.</p>
+            <p class="text-xs mt-2 opacity-70">Este plan es solamente una guía y no sustituye el consejo médico profesional.</p>
+        </div>
+    </footer>
+
+    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 relative fade-in">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800">
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h3 id="modal-title" class="text-2xl font-bold text-blue-900 mb-4"></h3>
+            <div id="modal-content" class="text-stone-700 space-y-3"></div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- DATA ---
+    const exerciseData = {
+        'The Hundred (Modificado)': { desc: 'Acostada boca arriba, piernas en posición de mesa (90°). Eleva cabeza y hombros. Bombea los brazos arriba y abajo, inhalando por 5 cuentas y exhalando por 5. Mantén el core contraído.', focus: 'Core, resistencia, respiración' },
+        'Bird Dog Lift Off': { desc: 'En cuatro patas, extiende el brazo derecho y la pierna izquierda simultáneamente, manteniendo la espalda recta. Regresa y alterna.', focus: 'Equilibrio, estabilidad del core' },
+        'Glute Bridge': { desc: 'Acostada boca arriba, rodillas flexionadas. Empuja con los talones y contrae los glúteos para levantar las caderas. Baja lentamente.', focus: 'Glúteos, isquiotibiales' },
+        'Side-Lying Leg Lift': { desc: 'Acostada de lado, cuerpo en línea recta. Levanta la pierna superior manteniendo el core firme. Realiza elevaciones y luego círculos pequeños.', focus: 'Abductores, glúteo medio' },
+        'Tabletop Oblique Crunch': { desc: 'En cuatro patas, extiende una pierna hacia atrás. Lleva la rodilla hacia el codo opuesto, contrayendo los oblicuos. Alterna lados.', focus: 'Oblicuos, core' },
+        'Roll Like a Ball': { desc: 'Sentada, rodillas flexionadas al pecho. Rueda hacia atrás hasta los hombros y vuelve a equilibrarte sin que los pies toquen el suelo. Mantén la espalda curvada.', focus: 'Masaje espinal, control del core' },
+        'Goblet Squat': { desc: 'Sostén una pesa ligera al pecho. Baja las caderas como si te sentaras en una silla, manteniendo la espalda recta. Sube empujando con los talones.', focus: 'Piernas, glúteos, core' },
+        'Bent-Over Dumbbell Row': { desc: 'Inclínate hacia adelante con la espalda recta. Sostén una pesa en cada mano. Tira de las pesas hacia el pecho, apretando los omóplatos.', focus: 'Espalda, bíceps' },
+        'Shoulder Press': { desc: 'De pie o sentada, sostén las pesas a la altura de los hombros. Extiende los brazos hacia arriba. Baja controladamente.', focus: 'Hombros, tríceps' },
+        'Dumbbell Curl': { desc: 'De pie, palmas hacia adelante. Flexiona los codos para llevar las pesas hacia los hombros. Baja controladamente.', focus: 'Bíceps' },
+        'Overhead Triceps Extension': { desc: 'Sostén una pesa con ambas manos sobre la cabeza. Baja la pesa detrás de la cabeza flexionando los codos. Extiende para volver a subir.', focus: 'Tríceps' },
+        'Walking Lunge with Dumbbells': { desc: 'Sosteniendo una pesa en cada mano, da un paso adelante y baja hasta que ambas rodillas estén a 90°. Alterna piernas.', focus: 'Piernas, glúteos, equilibrio' },
+        'Calf Raises': { desc: 'De pie, levanta los talones del suelo, apoyándote en las puntas de los pies. Usa una silla para apoyo si es necesario.', focus: 'Pantorrillas' }
+    };
+
+    const dailyPlan = {
+        0: { day: 'Domingo', morning: 'Descanso Activo', activity: 'Caminata relajada y Meal Prep', evening: null, focus: 'Recuperación y preparación' },
+        1: { day: 'Lunes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Conexión mente-músculo' },
+        2: { day: 'Martes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Mantener intensidad' },
+        3: { day: 'Miércoles', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Progresión y forma' },
+        4: { day: 'Jueves', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Atención a la postura' },
+        5: { day: 'Viernes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Celebrar la consistencia' },
+        6: { day: 'Sábado', morning: 'Descanso Activo', activity: 'Caminata relajada', evening: null, focus: 'Recuperación y flexibilidad' }
+    };
+    
+    const pilatesRoutine = ['The Hundred (Modificado)', 'Bird Dog Lift Off', 'Glute Bridge', 'Side-Lying Leg Lift', 'Tabletop Oblique Crunch', 'Roll Like a Ball'];
+    const strengthRoutine = ['Goblet Squat', 'Bent-Over Dumbbell Row', 'Shoulder Press', 'Dumbbell Curl', 'Overhead Triceps Extension', 'Walking Lunge with Dumbbells', 'Calf Raises'];
+    
+    const mealData = {
+        'Desayuno (6:00 AM)': [{ name: 'Avena Nocturna', desc: 'Avena, leche, semillas de chía, bayas y nueces. Preparar la noche anterior.'}, { name: 'Huevos Cocidos y Fruta', desc: '1-2 huevos duros (preparados con antelación) con una rebanada de pan integral y una manzana.'}, { name: 'Batido de Proteínas', desc: 'Proteína en polvo, espinacas, media banana y un puñado de bayas.'}, { name: 'Yogur Griego', desc: 'Yogur griego natural con bayas y un puñado de almendras.'}],
+        'Almuerzo (12:30 PM)': [{ name: 'Ensalada en Frasco', desc: 'Capas de aderezo, quinoa, pollo desmenuzado o garbanzos y verduras frescas.'}, { name: 'Plato de Quinoa Preparado', desc: 'Recetas de una sola olla con pollo, brócoli y quinoa. Ideal para recalentar.'}, { name: 'Wrap Integral', desc: 'Tortilla integral con hummus, pavo o pollo y muchas verduras ralladas.'}, { name: 'Sopa de Lentejas', desc: 'Nutritiva y fácil de transportar en un termo.'}],
+        'Cena (6:00 PM)': [{ name: 'Salmón al Horno', desc: 'Con una porción generosa de brócoli y espárragos asados.'}, { name: 'Revuelto de Tofu', desc: 'Tofu con una variedad de verduras coloridas y salsa ligera de soja.'}, { name: 'Ensalada de Quinoa y Garbanzos', desc: 'Con aguacate, tomates y aderezo de limón y aceite de oliva.'}, { name: 'Pechuga de Pollo a la Parrilla', desc: 'Acompañada de un camote mediano asado.'}],
+        'Snacks Inteligentes': [{ name: 'Yogur Griego', desc: 'Una taza con bayas frescas.'}, { name: 'Puñado de Almendras', desc: 'Aproximadamente 23 almendras.'}, { name: 'Vegetales con Hummus', desc: 'Bastones de zanahoria o pepino con 2 cucharadas de hummus.'}, { name: 'Huevo Duro', desc: 'Fácil de preparar con antelación.'}]
+    };
+
+    // --- PROGRESS TRACKING ---
+    let progressData = {};
+    const todayKey = new Date().toISOString().slice(0, 10);
+
+    function loadProgress() {
+        const savedData = localStorage.getItem('wellnessProgress');
+        progressData = savedData ? JSON.parse(savedData) : {};
+    }
+
+    function saveProgress() {
+        localStorage.setItem('wellnessProgress', JSON.stringify(progressData));
+    }
+
+    function updateProgress(taskName, isChecked) {
+        if (!progressData[todayKey]) {
+            progressData[todayKey] = { tasks: {}, completed: false };
+        }
+        progressData[todayKey].tasks[taskName] = isChecked;
+        const todaysPlan = getTodaysTasks();
+        const allTasksCompleted = todaysPlan.every(task => progressData[todayKey].tasks[task]);
+        progressData[todayKey].completed = allTasksCompleted;
+        saveProgress();
+        updateAllProgressVisuals();
+    }
+    
+    function getTodaysTasks() {
+        const today = new Date().getDay();
+        const plan = dailyPlan[today];
+        let tasks = [];
+        if (plan.morning === 'Rutina de Pilates') tasks = tasks.concat(pilatesRoutine);
+        if (plan.evening === 'Rutina de Fuerza y Cardio') tasks = tasks.concat(strengthRoutine);
+        tasks.push(plan.activity);
+        tasks = tasks.concat(Object.keys(mealData));
+        return tasks;
+    }
+
+    function handleTaskToggle(e) {
+        if(e.target.classList.contains('task-checkbox')) {
+            updateProgress(e.target.dataset.task, e.target.checked);
+        }
+    }
+
+    // --- UI RENDERING ---
+    function createExerciseCard(title, time, routine, planContainer) {
+        if (!routine) return;
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        const isChecked = (taskName) => progressData[todayKey]?.tasks?.[taskName] || false;
+        let exerciseListHtml = routine.map(ex => `
+            <li class="flex items-center justify-between py-2 border-b border-stone-100 gap-4">
+                <label for="task-${ex}" class="flex-grow text-stone-700 cursor-pointer">${ex}</label>
+                <div class="flex items-center gap-4">
+                    <button data-exercise="${ex}" class="open-modal-button text-xs text-blue-600 hover:text-blue-800 font-semibold">VER</button>
+                    <input type="checkbox" id="task-${ex}" data-task="${ex}" class="task-checkbox text-blue-600" ${isChecked(ex) ? 'checked' : ''}>
+                </div>
+            </li>`).join('');
+        card.innerHTML = `<h3 class="text-xl font-bold text-blue-900">${title}</h3><p class="text-sm text-stone-500 mb-4">${time}</p><ul class="space-y-1">${exerciseListHtml}</ul>`;
+        planContainer.appendChild(card);
+    }
+    
+    function createActivityCard(title, description, planContainer) {
+        const isChecked = (taskName) => progressData[todayKey]?.tasks?.[taskName] || false;
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        card.innerHTML = `<div class="flex justify-between items-start"><div><h3 class="text-xl font-bold text-blue-900">${title}</h3><p class="text-sm text-stone-600 mt-2">${description}</p></div><input type="checkbox" id="task-${description}" data-task="${description}" class="task-checkbox text-blue-600" ${isChecked(description) ? 'checked' : ''}></div>`;
+        planContainer.appendChild(card);
+    }
+
+    function createMealPlanCard(planContainer) {
+        const isChecked = (taskName) => progressData[todayKey]?.tasks?.[taskName] || false;
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        let mealListHtml = Object.keys(mealData).map(mealType => `
+             <li class="flex items-center justify-between py-3 border-b border-stone-100 last:border-b-0 gap-4">
+                <label for="task-${mealType}" class="flex-grow font-semibold text-blue-800 cursor-pointer">${mealType}</label>
+                <div class="flex items-center gap-4">
+                    <button data-meal="${mealType}" class="open-modal-button text-xs text-blue-600 hover:text-blue-800 font-semibold">VER</button>
+                    <input type="checkbox" id="task-${mealType}" data-task="${mealType}" class="task-checkbox text-blue-600" ${isChecked(mealType) ? 'checked' : ''}>
+                </div>
+            </li>`).join('');
+        card.innerHTML = `<h3 class="text-xl font-bold text-blue-900 mb-2">Plan de Comidas de Hoy</h3><p class="text-sm text-stone-500 mb-4">Marca las comidas que realizaste y consulta las sugerencias.</p><ul class="space-y-1">${mealListHtml}</ul><p class="text-xs text-stone-500 mt-4">Para más detalles, visita la página de "Nutrición".</p>`;
+        planContainer.appendChild(card);
+    }
+
+    function populateDailyPlan() {
+        const today = new Date().getDay();
+        const dailyPlanContainer = document.getElementById('daily-plan-container');
+        dailyPlanContainer.innerHTML = '';
+        const plan = dailyPlan[today];
+        if (plan.morning === 'Rutina de Pilates') createExerciseCard('Rutina Matutina: Pilates', '5:00 AM (15-20 min)', pilatesRoutine, dailyPlanContainer);
+        else createActivityCard('Rutina Matutina: Descanso Activo', 'Estiramientos suaves o yoga restaurativo.', dailyPlanContainer);
+        createActivityCard('Actividad Diaria', plan.activity, dailyPlanContainer);
+        if (plan.evening === 'Rutina de Fuerza y Cardio') createExerciseCard('Rutina Vespertina: Fuerza y Cardio', 'Después del trabajo (30-45 min)', strengthRoutine, dailyPlanContainer);
+        createMealPlanCard(dailyPlanContainer);
+        dailyPlanContainer.addEventListener('change', handleTaskToggle);
+    }
+    
+    // --- PROGRESS VISUALIZATION ---
+    function renderProgressCalendar() {
+        const calendarEl = document.getElementById('progress-calendar');
+        const calendarTitle = document.getElementById('calendar-title');
+        calendarEl.innerHTML = '';
+        const now = new Date();
+        const month = now.getMonth();
+        const year = now.getFullYear();
+        calendarTitle.textContent = `Calendario de Adherencia - ${now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}`;
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysOfWeek = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-7 gap-2 items-center';
+        daysOfWeek.forEach(day => {
+            grid.innerHTML += `<div class="text-center font-bold text-xs text-stone-500">${day}</div>`;
+        });
+        for (let i = 0; i < firstDayOfMonth; i++) grid.innerHTML += `<div></div>`;
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const isCompleted = progressData[dateKey]?.completed || false;
+            const isToday = day === now.getDate() && month === now.getMonth() && year === now.getFullYear();
+            let dayClasses = 'calendar-day flex items-center justify-center text-sm font-medium ';
+            if (isCompleted) dayClasses += 'bg-emerald-300 text-emerald-800 rounded-full';
+            else dayClasses += 'bg-stone-100 text-stone-600 rounded-lg';
+            if (isToday && !isCompleted) dayClasses += ' ring-2 ring-blue-500';
+            grid.innerHTML += `<div class="${dayClasses}"><span>${day}</span></div>`;
+        }
+        calendarEl.appendChild(grid);
+    }
+
+    function renderProgressStats() {
+        let streak = 0;
+        let date = new Date();
+        while (true) {
+            if (progressData[date.toISOString().slice(0, 10)]?.completed) {
+                streak++;
+                date.setDate(date.getDate() - 1);
+            } else break;
+        }
+        document.getElementById('streak-stat').textContent = streak;
+        let tasksCompleted = 0, totalTasks = 0;
+        date = new Date();
+        for (let i = 0; i < 7; i++) {
+            const dayData = progressData[date.toISOString().slice(0, 10)];
+            if (dayData?.tasks) {
+                const dayTasks = Object.values(dayData.tasks);
+                tasksCompleted += dayTasks.filter(Boolean).length;
+                totalTasks += dayTasks.length;
+            }
+            date.setDate(date.getDate() - 1);
+        }
+        document.getElementById('weekly-completion-stat').textContent = `${totalTasks > 0 ? Math.round((tasksCompleted / totalTasks) * 100) : 0}%`;
+    }
+
+    function updateAllProgressVisuals() {
+        renderProgressCalendar();
+        renderProgressStats();
+    }
+    
+    function exportToCSV() {
+        let csvContent = "data:text/csv;charset=utf-8,Fecha,Tarea,Completado\n";
+        Object.keys(progressData).sort().forEach(date => {
+            const dayData = progressData[date];
+            if (dayData.tasks) {
+                Object.entries(dayData.tasks).forEach(([taskName, isCompleted]) => {
+                    csvContent += `${date},"${taskName}",${isCompleted}\n`;
+                });
+            }
+        });
+        const link = document.createElement("a");
+        link.setAttribute("href", encodeURI(csvContent));
+        link.setAttribute("download", "mi_progreso_bienestar.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function initModal() {
+        const modal = document.getElementById('exercise-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        
+        document.body.addEventListener('click', function(e) {
+            const button = e.target.closest('.open-modal-button');
+            if (!button) return;
+
+            const exerciseName = button.dataset.exercise;
+            const mealName = button.dataset.meal;
+
+            if (exerciseName) {
+                const data = exerciseData[exerciseName];
+                if (data) {
+                    modalTitle.textContent = exerciseName;
+                    modalContent.innerHTML = `<p>${data.desc}</p><p class="mt-4 text-sm font-semibold text-blue-800 bg-blue-50 p-2 rounded-md">Enfoque: ${data.focus}</p>`;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            } else if (mealName) {
+                const data = mealData[mealName];
+                if (data) {
+                    modalTitle.textContent = `Sugerencias para ${mealName}`;
+                    let mealOptionsHtml = data.map(option => `<li><strong>${option.name}:</strong> ${option.desc}</li>`).join('');
+                    modalContent.innerHTML = `<ul class="space-y-2 list-disc list-inside">${mealOptionsHtml}</ul>`;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            }
+        });
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        closeModalButton.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    function initMobileMenu() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+    }
+
+    // --- APP INITIALIZATION ---
+    loadProgress();
+    document.getElementById('today-date').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('export-csv-button').addEventListener('click', exportToCSV);
+    populateDailyPlan();
+    updateAllProgressVisuals();
+    initModal();
+    initMobileMenu();
+});
+</script>
+</body>
+</html>
+>>>>>>> f6bef75ea79d0fc21502936d311e31425d7d1e64
