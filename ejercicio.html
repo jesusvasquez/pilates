@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Ejercicio - Bienestar Integral</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FDFBF8; }
+        .nav-link.active { color: #1e40af; font-weight: 600; border-bottom-color: #1e40af; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-blue-900">Bienestar Integral</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="./index.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Panel de Hoy</a>
+                        <a href="./ejercicio.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent active">Plan de Ejercicio</a>
+                        <a href="./nutricion.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Plan de Nutrición</a>
+                        <a href="./consejos.html" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Consejos</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-stone-600">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="./index.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Panel de Hoy</a>
+                <a href="./ejercicio.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Plan de Ejercicio</a>
+                <a href="./nutricion.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Plan de Nutrición</a>
+                <a href="./consejos.html" class="nav-link block text-stone-600 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Consejos</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 fade-in">
+        <section id="ejercicio">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">Plan de Ejercicio Completo</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">Construye fuerza, flexibilidad y resistencia con un plan estructurado y progresivo.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold text-blue-900 mb-4">Horario Semanal de Ejercicios</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-stone-600">
+                        <thead class="text-xs text-blue-800 uppercase bg-blue-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Día</th>
+                                <th scope="col" class="px-6 py-3">Rutina Matutina (5:00 AM)</th>
+                                <th scope="col" class="px-6 py-3">Actividad Diaria</th>
+                                <th scope="col" class="px-6 py-3">Rutina Vespertina</th>
+                                <th scope="col" class="px-6 py-3">Enfoque</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weekly-schedule-body"></tbody>
+                    </table>
+                </div>
+                 <p class="text-xs text-stone-500 mt-4">Nota: Haz clic en los nombres de los ejercicios para ver instrucciones detalladas.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-blue-900 text-white mt-16">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm">Plan de Bienestar Integral &copy; 2025 por Jesús A. Vásquez C. Un viaje hacia una vida más saludable.</p>
+            <p class="text-xs mt-2 opacity-70">Este plan es solamente una guía y no sustituye el consejo médico profesional.</p>
+        </div>
+    </footer>
+
+    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 relative fade-in">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800">
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h3 id="modal-title" class="text-2xl font-bold text-blue-900 mb-4"></h3>
+            <div id="modal-content" class="text-stone-700 space-y-3"></div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- DATA ---
+    const exerciseData = {
+        'The Hundred (Modificado)': { desc: 'Acostada boca arriba, piernas en posición de mesa (90°). Eleva cabeza y hombros. Bombea los brazos arriba y abajo, inhalando por 5 cuentas y exhalando por 5. Mantén el core contraído.', focus: 'Core, resistencia, respiración' },
+        'Bird Dog Lift Off': { desc: 'En cuatro patas, extiende el brazo derecho y la pierna izquierda simultáneamente, manteniendo la espalda recta. Regresa y alterna.', focus: 'Equilibrio, estabilidad del core' },
+        'Glute Bridge': { desc: 'Acostada boca arriba, rodillas flexionadas. Empuja con los talones y contrae los glúteos para levantar las caderas. Baja lentamente.', focus: 'Glúteos, isquiotibiales' },
+        'Side-Lying Leg Lift': { desc: 'Acostada de lado, cuerpo en línea recta. Levanta la pierna superior manteniendo el core firme. Realiza elevaciones y luego círculos pequeños.', focus: 'Abductores, glúteo medio' },
+        'Tabletop Oblique Crunch': { desc: 'En cuatro patas, extiende una pierna hacia atrás. Lleva la rodilla hacia el codo opuesto, contrayendo los oblicuos. Alterna lados.', focus: 'Oblicuos, core' },
+        'Roll Like a Ball': { desc: 'Sentada, rodillas flexionadas al pecho. Rueda hacia atrás hasta los hombros y vuelve a equilibrarte sin que los pies toquen el suelo. Mantén la espalda curvada.', focus: 'Masaje espinal, control del core' },
+        'Goblet Squat': { desc: 'Sostén una pesa ligera al pecho. Baja las caderas como si te sentaras en una silla, manteniendo la espalda recta. Sube empujando con los talones.', focus: 'Piernas, glúteos, core' },
+        'Bent-Over Dumbbell Row': { desc: 'Inclínate hacia adelante con la espalda recta. Sostén una pesa en cada mano. Tira de las pesas hacia el pecho, apretando los omóplatos.', focus: 'Espalda, bíceps' },
+        'Shoulder Press': { desc: 'De pie o sentada, sostén las pesas a la altura de los hombros. Extiende los brazos hacia arriba. Baja controladamente.', focus: 'Hombros, tríceps' },
+        'Dumbbell Curl': { desc: 'De pie, palmas hacia adelante. Flexiona los codos para llevar las pesas hacia los hombros. Baja controladamente.', focus: 'Bíceps' },
+        'Overhead Triceps Extension': { desc: 'Sostén una pesa con ambas manos sobre la cabeza. Baja la pesa detrás de la cabeza flexionando los codos. Extiende para volver a subir.', focus: 'Tríceps' },
+        'Walking Lunge with Dumbbells': { desc: 'Sosteniendo una pesa en cada mano, da un paso adelante y baja hasta que ambas rodillas estén a 90°. Alterna piernas.', focus: 'Piernas, glúteos, equilibrio' },
+        'Calf Raises': { desc: 'De pie, levanta los talones del suelo, apoyándote en las puntas de los pies. Usa una silla para apoyo si es necesario.', focus: 'Pantorrillas' }
+    };
+
+    const dailyPlan = {
+        0: { day: 'Domingo', morning: 'Descanso Activo', activity: 'Caminata relajada y Meal Prep', evening: null, focus: 'Recuperación y preparación' },
+        1: { day: 'Lunes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Conexión mente-músculo' },
+        2: { day: 'Martes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Mantener intensidad' },
+        3: { day: 'Miércoles', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Progresión y forma' },
+        4: { day: 'Jueves', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Atención a la postura' },
+        5: { day: 'Viernes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Celebrar la consistencia' },
+        6: { day: 'Sábado', morning: 'Descanso Activo', activity: 'Caminata relajada', evening: null, focus: 'Recuperación y flexibilidad' }
+    };
+
+    // --- UI RENDERING ---
+    function populateWeeklySchedule() {
+        const scheduleBody = document.getElementById('weekly-schedule-body');
+        scheduleBody.innerHTML = '';
+        Object.values(dailyPlan).forEach(plan => {
+            const row = document.createElement('tr');
+            row.className = 'bg-white border-b hover:bg-blue-50';
+            let exercisesHtml = '';
+            if (plan.morning === 'Rutina de Pilates') {
+                exercisesHtml += 'Pilates: The Hundred, Bird Dog, etc.';
+            } else {
+                exercisesHtml = plan.morning;
+            }
+
+            row.innerHTML = `
+                <td class="px-6 py-4 font-semibold text-blue-900">${plan.day}</td>
+                <td class="px-6 py-4">${plan.morning}</td>
+                <td class="px-6 py-4">${plan.activity}</td>
+                <td class="px-6 py-4">${plan.evening || 'Descanso'}</td>
+                <td class="px-6 py-4">${plan.focus}</td>
+            `;
+            scheduleBody.appendChild(row);
+        });
+    }
+
+    function initModal() {
+        const modal = document.getElementById('exercise-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        document.body.addEventListener('click', function(e) {
+            if (e.target.closest('.open-modal-button')) {
+                const data = exerciseData[e.target.closest('.open-modal-button').dataset.exercise];
+                if (data) {
+                    modalTitle.textContent = e.target.closest('.open-modal-button').dataset.exercise;
+                    modalContent.innerHTML = `<p>${data.desc}</p><p class="mt-4 text-sm font-semibold text-blue-800 bg-blue-50 p-2 rounded-md">Enfoque: ${data.focus}</p>`;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            }
+        });
+        const closeModal = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+        closeModalButton.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    }
+
+    function initMobileMenu() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+    }
+
+    // --- APP INITIALIZATION ---
+    populateWeeklySchedule();
+    initModal();
+    initMobileMenu();
+});
+</script>
+</body>
+</html>
