@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Bienestar Interactivo</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: Se ha diseñado una Single-Page Application (SPA) con una arquitectura de panel de control (dashboard). El enfoque principal es un "Panel de Hoy" que presenta al usuario la información más relevante y procesable para el día actual (rutinas y comidas). Esta estructura orientada a tareas es superior a una réplica lineal del informe porque reduce la carga cognitiva y permite un acceso inmediato a la información crítica. La navegación permite profundizar en secciones más detalladas (Plan de Ejercicio completo, Plan de Nutrición, Progreso y Consejos) a demanda. Este flujo de usuario, desde el resumen diario hasta el detalle opcional, está diseñado para la máxima usabilidad y para fomentar la adherencia al plan. -->
+    <!-- Visualization & Content Choices: 1. Datos del Día (Rutinas/Comidas) -> Objetivo: Informar acciones diarias -> Presentación: Tarjetas interactivas en un panel -> Interacción: Clic para ver detalles -> Justificación: Acceso rápido y enfocado. 2. Distribución de Macronutrientes -> Objetivo: Educar sobre balance nutricional -> Presentación: Gráfico de Donut (Chart.js/Canvas) -> Interacción: Hover para ver porcentajes -> Justificación: Visualización rápida y comprensible de proporciones. 3. Proyección de Pérdida de Peso -> Objetivo: Motivar y visualizar metas -> Presentación: Gráfico de Líneas (Chart.js/Canvas) -> Interacción: Hover para ver metas semanales -> Justificación: Muestra el progreso a lo largo del tiempo. 4. Detalles de Ejercicios/Comidas -> Objetivo: Proveer información detallada sin saturar -> Presentación: Modales y Acordeones (HTML/JS) -> Interacción: Clic para expandir/mostrar -> Justificación: Mantiene la interfaz limpia, revelando complejidad solo cuando es necesario. 5. Principios y Beneficios -> Objetivo: Reforzar la motivación -> Presentación: Tarjetas con iconos (HTML/Tailwind) -> Interacción: Efectos hover sutiles -> Justificación: Fragmenta el texto denso en bloques visualmente atractivos. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm Neutral Background */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 380px;
+            }
+        }
+        .nav-link.active {
+            color: #1e40af; /* Deep Blue for active link */
+            font-weight: 600;
+            border-bottom-color: #1e40af;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-blue-900">Bienestar Integral</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#hoy" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Panel de Hoy</a>
+                        <a href="#ejercicio" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Plan de Ejercicio</a>
+                        <a href="#nutricion" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Plan de Nutrición</a>
+                        <a href="#progreso" class="nav-link text-stone-600 hover:text-blue-800 px-3 py-2 text-sm font-medium border-b-2 border-transparent">Progreso y Consejos</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-stone-600 hover:text-blue-800 hover:bg-stone-100 focus:outline-none">
+                        <span class="sr-only">Abrir menú</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#hoy" class="nav-link block text-stone-600 hover:text-blue-800 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Panel de Hoy</a>
+                <a href="#ejercicio" class="nav-link block text-stone-600 hover:text-blue-800 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Plan de Ejercicio</a>
+                <a href="#nutricion" class="nav-link block text-stone-600 hover:text-blue-800 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Plan de Nutrición</a>
+                <a href="#progreso" class="nav-link block text-stone-600 hover:text-blue-800 hover:bg-stone-100 px-3 py-2 rounded-md text-base font-medium">Progreso y Consejos</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="hoy" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">Panel de Hoy</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">Tu guía diaria para el éxito. Aquí tienes tus rutinas y comidas para <span id="today-date" class="font-semibold text-blue-800"></span>.</p>
+            </div>
+
+            <div id="daily-plan-container" class="space-y-8">
+            </div>
+        </section>
+
+        <section id="seguimiento" class="scroll-mt-20 mt-12">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold text-blue-900 mb-6">Seguimiento Diario</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Registro de Caminata -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-2">
+                                Minutos de Caminata Hoy
+                            </label>
+                            <input type="number" 
+                                   id="walking-minutes" 
+                                   class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="0"
+                                   min="0"
+                                   max="120">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-2">
+                                Peso (kg) - Opcional
+                            </label>
+                            <input type="number" 
+                                   id="weight-input" 
+                                   class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="80.0"
+                                   step="0.1"
+                                   min="40"
+                                   max="200">
+                        </div>
+                    </div>
+                    
+                    <!-- Notas del día -->
+                    <div>
+                        <label class="block text-sm font-medium text-stone-700 mb-2">
+                            Notas del Día
+                        </label>
+                        <textarea id="daily-notes" 
+                                  class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                  rows="4"
+                                  placeholder="¿Cómo te sentiste hoy? ¿Algún desafío o logro?"></textarea>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex gap-4">
+                    <button id="save-daily-data" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        Guardar Progreso
+                    </button>
+                    <button id="export-csv" class="bg-stone-600 text-white px-4 py-2 rounded-md hover:bg-stone-700">
+                        Exportar CSV
+                    </button>
+                    <button id="view-history" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                        Ver Historial
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+
+        <hr class="my-16 border-stone-200">
+
+        <section id="ejercicio" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">Plan de Ejercicio Completo</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">Construye fuerza, flexibilidad y resistencia con un plan estructurado y progresivo.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold text-blue-900 mb-4">Horario Semanal de Ejercicios</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-stone-600">
+                        <thead class="text-xs text-blue-800 uppercase bg-blue-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Día</th>
+                                <th scope="col" class="px-6 py-3">Rutina Matutina (5:00 AM)</th>
+                                <th scope="col" class="px-6 py-3">Actividad Diaria</th>
+                                <th scope="col" class="px-6 py-3">Rutina Vespertina</th>
+                                <th scope="col" class="px-6 py-3">Enfoque</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weekly-schedule-body">
+                        </tbody>
+                    </table>
+                </div>
+                 <p class="text-xs text-stone-500 mt-4">Nota: Haz clic en los nombres de los ejercicios en las tarjetas del "Panel de Hoy" para ver instrucciones detalladas.</p>
+            </div>
+        </section>
+        
+        <hr class="my-16 border-stone-200">
+
+        <section id="nutricion" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">Plan de Nutrición Inteligente</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">Alimenta tu cuerpo para obtener energía y resultados con un plan de 1500 calorías.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-blue-900 mb-2 text-center">Distribución de Macronutrientes</h3>
+                    <p class="text-sm text-center text-stone-500 mb-4">Objetivo para un balance óptimo y saciedad.</p>
+                    <div class="chart-container">
+                        <canvas id="macroChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg space-y-4">
+                    <h3 class="text-xl font-bold text-blue-900 mb-4">Ideas de Comidas y Snacks</h3>
+                    <div id="meal-accordion"></div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-stone-200">
+
+        <section id="progreso" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">Progreso y Consejos de Bienestar</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-stone-600">Sigue tu transformación y cuida tu mente y cuerpo.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-blue-900 mb-2 text-center">Proyección de Pérdida de Peso</h3>
+                    <p class="text-sm text-center text-stone-500 mb-4">Meta saludable y sostenible de ~1.4kg al mes.</p>
+                    <div class="chart-container">
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg space-y-4">
+                     <h3 class="text-xl font-bold text-blue-900 mb-4">Pilares del Bienestar</h3>
+                     <div id="wellness-accordion"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-blue-900 text-white mt-16">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm">Plan de Bienestar Integral &copy; 2025. Un viaje hacia una vida más saludable.</p>
+            <p class="text-xs mt-2 opacity-70">Este plan es una guía y no sustituye el consejo médico profesional.</p>
+        </div>
+    </footer>
+
+    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 relative fade-in">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800">
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h3 id="modal-title" class="text-2xl font-bold text-blue-900 mb-4"></h3>
+            <div id="modal-content" class="text-stone-700 space-y-3"></div>
+        </div>
+    </div>
+
+    <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 relative fade-in">
+            <button id="close-history-button" class="absolute top-4 right-4 text-stone-500 hover:text-stone-800">
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h3 class="text-2xl font-bold text-blue-900 mb-6">Historial de Progreso</h3>
+            <div id="history-content" class="space-y-4">
+                <!-- El contenido se generará dinámicamente -->
+            </div>
+        </div>
+    </div>
+    
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const exerciseData = {
+        'The Hundred (Modificado)': {
+            desc: 'Acostada boca arriba, piernas en posición de mesa (90°). Eleva cabeza y hombros. Bombea los brazos arriba y abajo, inhalando por 5 cuentas y exhalando por 5. Mantén el core contraído.',
+            focus: 'Core, resistencia, respiración'
+        },
+        'Bird Dog Lift Off': {
+            desc: 'En cuatro patas, extiende el brazo derecho y la pierna izquierda simultáneamente, manteniendo la espalda recta. Regresa y alterna.',
+            focus: 'Equilibrio, estabilidad del core'
+        },
+        'Glute Bridge': {
+            desc: 'Acostada boca arriba, rodillas flexionadas. Empuja con los talones y contrae los glúteos para levantar las caderas. Baja lentamente.',
+            focus: 'Glúteos, isquiotibiales'
+        },
+        'Side-Lying Leg Lift': {
+            desc: 'Acostada de lado, cuerpo en línea recta. Levanta la pierna superior manteniendo el core firme. Realiza elevaciones y luego círculos pequeños.',
+            focus: 'Abductores, glúteo medio'
+        },
+        'Tabletop Oblique Crunch': {
+            desc: 'En cuatro patas, extiende una pierna hacia atrás. Lleva la rodilla hacia el codo opuesto, contrayendo los oblicuos. Alterna lados.',
+            focus: 'Oblicuos, core'
+        },
+        'Roll Like a Ball': {
+            desc: 'Sentada, rodillas flexionadas al pecho. Rueda hacia atrás hasta los hombros y vuelve a equilibrarte sin que los pies toquen el suelo. Mantén la espalda curvada.',
+            focus: 'Masaje espinal, control del core'
+        },
+        'Goblet Squat': {
+            desc: 'Sostén una pesa ligera al pecho. Baja las caderas como si te sentaras en una silla, manteniendo la espalda recta. Sube empujando con los talones.',
+            focus: 'Piernas, glúteos, core'
+        },
+        'Bent-Over Dumbbell Row': {
+            desc: 'Inclínate hacia adelante con la espalda recta. Sostén una pesa en cada mano. Tira de las pesas hacia el pecho, apretando los omóplatos.',
+            focus: 'Espalda, bíceps'
+        },
+        'Shoulder Press': {
+            desc: 'De pie o sentada, sostén las pesas a la altura de los hombros. Extiende los brazos hacia arriba. Baja controladamente.',
+            focus: 'Hombros, tríceps'
+        },
+        'Dumbbell Curl': {
+            desc: 'De pie, palmas hacia adelante. Flexiona los codos para llevar las pesas hacia los hombros. Baja controladamente.',
+            focus: 'Bíceps'
+        },
+        'Overhead Triceps Extension': {
+            desc: 'Sostén una pesa con ambas manos sobre la cabeza. Baja la pesa detrás de la cabeza flexionando los codos. Extiende para volver a subir.',
+            focus: 'Tríceps'
+        },
+        'Walking Lunge with Dumbbells': {
+            desc: 'Sosteniendo una pesa en cada mano, da un paso adelante y baja hasta que ambas rodillas estén a 90°. Alterna piernas.',
+            focus: 'Piernas, glúteos, equilibrio'
+        },
+        'Calf Raises': {
+            desc: 'De pie, levanta los talones del suelo, apoyándote en las puntas de los pies. Usa una silla para apoyo si es necesario.',
+            focus: 'Pantorrillas'
+        }
+    };
+
+    const dailyPlan = {
+        0: { day: 'Domingo', morning: 'Descanso Activo', activity: 'Caminata relajada y Meal Prep', evening: null, focus: 'Recuperación y preparación' },
+        1: { day: 'Lunes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Conexión mente-músculo' },
+        2: { day: 'Martes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Mantener intensidad' },
+        3: { day: 'Miércoles', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Progresión y forma' },
+        4: { day: 'Jueves', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Atención a la postura' },
+        5: { day: 'Viernes', morning: 'Rutina de Pilates', activity: '50 min de caminata enérgica', evening: 'Rutina de Fuerza y Cardio', focus: 'Celebrar la consistencia' },
+        6: { day: 'Sábado', morning: 'Descanso Activo', activity: 'Caminata relajada', evening: null, focus: 'Recuperación y flexibilidad' }
+    };
+    
+    const pilatesRoutine = ['The Hundred (Modificado)', 'Bird Dog Lift Off', 'Glute Bridge', 'Side-Lying Leg Lift', 'Tabletop Oblique Crunch', 'Roll Like a Ball'];
+    const strengthRoutine = ['Goblet Squat', 'Bent-Over Dumbbell Row', 'Shoulder Press', 'Dumbbell Curl', 'Overhead Triceps Extension', 'Walking Lunge with Dumbbells', 'Calf Raises'];
+    
+    const mealData = {
+        'Desayuno (4:30 AM)': [
+            { name: 'Avena Nocturna', desc: 'Avena, leche, semillas de chía, bayas y nueces. Preparar la noche anterior.'},
+            { name: 'Huevos Cocidos y Fruta', desc: '1-2 huevos duros (preparados con antelación) con una rebanada de pan integral y una manzana.'},
+            { name: 'Batido de Proteínas', desc: 'Proteína en polvo, espinacas, media banana y un puñado de bayas.'},
+            { name: 'Yogur Griego', desc: 'Yogur griego natural con bayas y un puñado de almendras.'}
+        ],
+        'Almuerzo (12:30 PM)': [
+            { name: 'Ensalada en Frasco', desc: 'Capas de aderezo, quinoa, pollo desmenuzado o garbanzos y verduras frescas.'},
+            { name: 'Plato de Quinoa Preparado', desc: 'Recetas de una sola olla con pollo, brócoli y quinoa. Ideal para recalentar.'},
+            { name: 'Wrap Integral', desc: 'Tortilla integral con hummus, pavo o pollo y muchas verduras ralladas.'},
+            { name: 'Sopa de Lentejas', desc: 'Nutritiva y fácil de transportar en un termo.'}
+        ],
+        'Cena (6:30 PM)': [
+            { name: 'Salmón al Horno', desc: 'Con una porción generosa de brócoli y espárragos asados.'},
+            { name: 'Revuelto de Tofu', desc: 'Tofu con una variedad de verduras coloridas y salsa ligera de soja.'},
+            { name: 'Ensalada de Quinoa y Garbanzos', desc: 'Con aguacate, tomates y aderezo de limón y aceite de oliva.'},
+            { name: 'Pechuga de Pollo a la Parrilla', desc: 'Acompañada de un camote mediano asado.'}
+        ],
+        'Snacks Inteligentes': [
+            { name: 'Yogur Griego', desc: 'Una taza con bayas frescas.'},
+            { name: 'Puñado de Almendras', desc: 'Aproximadamente 23 almendras.'},
+            { name: 'Vegetales con Hummus', desc: 'Bastones de zanahoria o pepino con 2 cucharadas de hummus.'},
+            { name: 'Huevo Duro', desc: 'Fácil de preparar con antelación.'}
+        ]
+    };
+    
+    const wellnessData = {
+        'Seguimiento del Progreso': [
+            { name: 'Más Allá de la Báscula', desc: 'Usa una cinta métrica para medir cintura y caderas, nota cómo te queda la ropa y toma fotos de progreso cada 2-4 semanas. Estos son indicadores más fiables de la pérdida de grasa y ganancia de tono muscular.'},
+            { name: 'Pruebas de Condición Física', desc: 'Registra cuántas sentadillas puedes hacer o cuánto tiempo puedes mantener el equilibrio en una pierna. ¡Celebrar las mejoras en tu fuerza y resistencia es clave!'}
+        ],
+        'Sueño Reparador': [
+            { name: 'Horario Consistente', desc: 'Intenta acostarte y levantarte a la misma hora todos los días, incluso los fines de semana (ej. acostarse 8:30 PM para levantarse a las 4:00 AM). Esto regula tu reloj biológico.'},
+            { name: 'Rutina de Relajación', desc: 'Crea un ritual antes de dormir: lee un libro, toma un baño tibio o escucha música suave. Evita pantallas (TV, teléfono) al menos una hora antes de dormir.'}
+        ],
+        'Manejo del Estrés': [
+            { name: 'Respiración Consciente', desc: 'Tómate 5 minutos durante el día para enfocarte en tu respiración, como aprendes en Pilates. Inhala profundo, exhala lento. Esto calma el sistema nervioso.'},
+            { name: 'Movimiento Suave', desc: 'Las caminatas y los estiramientos no solo son para el cuerpo físico; son excelentes para despejar la mente y reducir los niveles de cortisol, la hormona del estrés.'}
+        ]
+    };
+
+    // Sistema de almacenamiento y tracking - 22-jul-2025
+    const storage = {
+    // Obtener datos del día
+        getTodayData: function() {
+            const today = new Date().toISOString().split('T')[0];
+            const data = localStorage.getItem(`wellness_${today}`);
+            return data ? JSON.parse(data) : {
+                date: today,
+                exercises: {},
+                meals: {},
+                walking: 0,
+                weight: null,
+                notes: ''
+            };
+        },
+    
+        // Guardar datos del día - 22-jul-2025
+        saveTodayData: function(data) {
+            const today = new Date().toISOString().split('T')[0];
+            localStorage.setItem(`wellness_${today}`, JSON.stringify(data));
+        },
+    
+        // Obtener historial completo - 22-jul-2025
+        getAllData: function() {
+            const allData = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('wellness_')) {
+                    allData.push(JSON.parse(localStorage.getItem(key)));
+                }
+            }
+            return allData.sort((a, b) => new Date(b.date) - new Date(a.date));
+        },
+    
+        // Exportar a CSV - 22-jul-2025
+        exportToCSV: function() {
+            const data = this.getAllData();
+            if (data.length === 0) {
+                alert('No hay datos para exportar');
+                return;
+            }
+            
+            let csv = 'Fecha,Ejercicios Completados,Comidas Registradas,Minutos Caminata,Peso,Notas\n';
+            
+            data.forEach(day => {
+                const exerciseCount = Object.values(day.exercises || {}).filter(v => v).length;
+                const mealCount = Object.values(day.meals || {}).filter(v => v).length;
+                csv += `${day.date},${exerciseCount},${mealCount},${day.walking || 0},${day.weight || ''},${day.notes || ''}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `progreso_bienestar_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+    };
+
+    document.getElementById('view-history').addEventListener('click', function() {
+        const historyModal = document.getElementById('history-modal');
+        const historyContent = document.getElementById('history-content');
+        const allData = storage.getAllData();
+        
+        if (allData.length === 0) {
+            historyContent.innerHTML = '<p class="text-stone-600">No hay datos registrados aún.</p>';
+        } else {
+            historyContent.innerHTML = allData.map(day => {
+                const exerciseCount = Object.values(day.exercises || {}).filter(v => v).length;
+                const mealCount = Object.values(day.meals || {}).filter(v => v).length;
+                
+                return `
+                    <div class="border border-stone-200 rounded-lg p-4 hover:bg-stone-50">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-blue-900">${new Date(day.date).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
+                            ${day.weight ? `<span class="text-sm text-stone-600">Peso: ${day.weight} kg</span>` : ''}
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <span class="text-stone-600">Ejercicios:</span>
+                                <span class="font-semibold ml-1">${exerciseCount}</span>
+                            </div>
+                            <div>
+                                <span class="text-stone-600">Comidas:</span>
+                                <span class="font-semibold ml-1">${mealCount}</span>
+                            </div>
+                            <div>
+                                <span class="text-stone-600">Caminata:</span>
+                                <span class="font-semibold ml-1">${day.walking || 0} min</span>
+                            </div>
+                        </div>
+                        ${day.notes ? `<p class="text-sm text-stone-600 mt-2 italic">"${day.notes}"</p>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        historyModal.classList.remove('hidden');
+        historyModal.classList.add('flex');
+    });
+
+    document.getElementById('close-history-button').addEventListener('click', function() {
+        document.getElementById('history-modal').classList.add('hidden');
+        document.getElementById('history-modal').classList.remove('flex');
+    });
+
+    //funciones adicionales 22-jul-2025
+    // Event Listeners para tracking
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('exercise-checkbox')) {
+            const exercise = e.target.dataset.exercise;
+            const todayData = storage.getTodayData();
+            todayData.exercises[exercise] = e.target.checked;
+            storage.saveTodayData(todayData);
+            
+            // Actualizar visual
+            const label = e.target.nextElementSibling;
+            if (e.target.checked) {
+                label.classList.add('line-through', 'opacity-60');
+            } else {
+                label.classList.remove('line-through', 'opacity-60');
+            }
+            
+            // Actualizar progreso
+            updateProgressBars();
+        }
+    });
+
+    // Guardar datos diarios
+    document.getElementById('save-daily-data').addEventListener('click', function() {
+        const todayData = storage.getTodayData();
+        todayData.walking = parseInt(document.getElementById('walking-minutes').value) || 0;
+        todayData.weight = parseFloat(document.getElementById('weight-input').value) || null;
+        todayData.notes = document.getElementById('daily-notes').value;
+        storage.saveTodayData(todayData);
+        
+        showNotification('¡Progreso guardado exitosamente!');
+    });
+
+    // Exportar CSV
+    document.getElementById('export-csv').addEventListener('click', function() {
+        storage.exportToCSV();
+    });
+
+    // Modal de registro de comidas
+    document.getElementById('log-meals-btn').addEventListener('click', function() {
+        showMealLoggingModal();
+    });
+
+    // Función para mostrar notificaciones
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Cargar datos guardados al iniciar
+    function loadSavedData() {
+        const todayData = storage.getTodayData();
+        document.getElementById('walking-minutes').value = todayData.walking || '';
+        document.getElementById('weight-input').value = todayData.weight || '';
+        document.getElementById('daily-notes').value = todayData.notes || '';
+    }
+
+    // Llamar al cargar la página
+    loadSavedData();
+
+    /*     //función antigua
+    function createExerciseCard(title, time, routine, planContainer) {
+        if (!routine) return;
+
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        
+        let exerciseListHtml = routine.map(ex => `
+            <li class="flex items-center justify-between py-2 border-b border-stone-100">
+                <span class="text-stone-700">${ex}</span>
+                <button data-exercise="${ex}" class="open-modal-button text-xs text-blue-600 hover:text-blue-800 font-semibold">VER</button>
+            </li>
+        `).join('');
+        
+        let cardioHtml = title.includes('Fuerza') ? `
+            <div class="mt-4 pt-4 border-t border-stone-200">
+                <h4 class="font-semibold text-blue-800 mb-2">Cardio (5-10 min)</h4>
+                <p class="text-sm text-stone-600">Intervalos suaves con cuerda de saltar o caminata en el lugar.</p>
+            </div>
+        ` : '';
+
+        card.innerHTML = `
+            <h3 class="text-xl font-bold text-blue-900">${title}</h3>
+            <p class="text-sm text-stone-500 mb-4">${time}</p>
+            <ul class="space-y-1">${exerciseListHtml}</ul>
+            ${cardioHtml}
+        `;
+        planContainer.appendChild(card);
+    } */
+    
+    function createExerciseCard(title, time, routine, planContainer) {
+        // función createExerciseCard - 22-jul-2025
+        if (!routine) return;
+
+        const todayData = storage.getTodayData();
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        
+        let exerciseListHtml = routine.map(ex => {
+            const isChecked = todayData.exercises[ex] || false;
+            return `
+                <li class="flex items-center justify-between py-2 border-b border-stone-100">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" 
+                            class="exercise-checkbox w-5 h-5 text-blue-600 rounded focus:ring-blue-500" 
+                            data-exercise="${ex}" 
+                            ${isChecked ? 'checked' : ''}>
+                        <span class="text-stone-700 ${isChecked ? 'line-through opacity-60' : ''}">${ex}</span>
+                    </div>
+                    <button data-exercise="${ex}" class="open-modal-button text-xs text-blue-600 hover:text-blue-800 font-semibold">VER</button>
+                </li>
+            `;
+        }).join('');
+        
+        let cardioHtml = title.includes('Fuerza') ? `
+            <div class="mt-4 pt-4 border-t border-stone-200">
+                <h4 class="font-semibold text-blue-800 mb-2">Cardio (5-10 min)</h4>
+                <p class="text-sm text-stone-600">Intervalos suaves con cuerda de saltar o caminata en el lugar.</p>
+            </div>
+        ` : '';
+
+        const completedCount = routine.filter(ex => todayData.exercises[ex]).length;
+        const progressPercentage = (completedCount / routine.length) * 100;
+
+        card.innerHTML = `
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-blue-900">${title}</h3>
+                    <p class="text-sm text-stone-500">${time}</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm font-semibold text-blue-800">${completedCount}/${routine.length}</div>
+                    <div class="w-20 bg-stone-200 rounded-full h-2 mt-1">
+                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+                    </div>
+                </div>
+            </div>
+            <ul class="space-y-1">${exerciseListHtml}</ul>
+            ${cardioHtml}
+        `;
+        planContainer.appendChild(card);
+    }
+
+    function createActivityCard(title, description, planContainer) {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        card.innerHTML = `
+            <h3 class="text-xl font-bold text-blue-900">${title}</h3>
+            <p class="text-sm text-stone-600 mt-2">${description}</p>
+        `;
+        planContainer.appendChild(card);
+    }
+
+    /* function createMealPlanCard(planContainer) {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        card.innerHTML = `<h3 class="text-xl font-bold text-blue-900 mb-4">Plan de Comidas de Hoy</h3>`;
+        
+        const mealAccordion = document.createElement('div');
+        
+        Object.entries(mealData).forEach(([mealType, options], index) => {
+            const accordionItem = document.createElement('div');
+            accordionItem.className = 'border-b border-stone-200';
+            
+            const button = document.createElement('button');
+            button.className = 'w-full flex justify-between items-center py-3 text-left font-semibold text-blue-800 focus:outline-none';
+            button.innerHTML = `
+                <span>${mealType}</span>
+                <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            `;
+
+            const content = document.createElement('div');
+            content.className = 'pb-3 text-sm text-stone-600 hidden';
+            content.innerHTML = `<ul class="space-y-2 pl-4 list-disc list-inside">${options.map(o => `<li><strong>${o.name}:</strong> ${o.desc}</li>`).join('')}</ul>`;
+            
+            button.addEventListener('click', () => {
+                const isHidden = content.classList.contains('hidden');
+                document.querySelectorAll('.meal-accordion-content').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.meal-accordion-button svg').forEach(svg => svg.classList.remove('rotate-180'));
+                
+                if (isHidden) {
+                    content.classList.remove('hidden');
+                    button.querySelector('svg').classList.add('rotate-180');
+                }
+            });
+            button.classList.add('meal-accordion-button');
+            content.classList.add('meal-accordion-content');
+
+            accordionItem.appendChild(button);
+            accordionItem.appendChild(content);
+            mealAccordion.appendChild(accordionItem);
+        });
+
+        card.appendChild(mealAccordion);
+        planContainer.appendChild(card);
+    } */
+
+    function createMealPlanCard(planContainer) {
+        const todayData = storage.getTodayData();
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-lg fade-in';
+        card.innerHTML = `
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-blue-900">Plan de Comidas de Hoy</h3>
+                <button id="log-meals-btn" class="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700">
+                    Registrar Comidas
+                </button>
+            </div>
+        `;
+        
+        const mealAccordion = document.createElement('div');
+        
+        Object.entries(mealData).forEach(([mealType, options], index) => {
+            const isLogged = todayData.meals[mealType] || false;
+            const accordionItem = document.createElement('div');
+            accordionItem.className = 'border-b border-stone-200';
+            
+            const button = document.createElement('button');
+            button.className = 'w-full flex justify-between items-center py-3 text-left font-semibold text-blue-800 focus:outline-none';
+            button.innerHTML = `
+                <span class="flex items-center gap-2">
+                    ${mealType}
+                    ${isLogged ? '<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">✓ Registrado</span>' : ''}
+                </span>
+                <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            `;
+
+            const content = document.createElement('div');
+            content.className = 'pb-3 text-sm text-stone-600 hidden';
+            content.innerHTML = `<ul class="space-y-2 pl-4 list-disc list-inside">${options.map(o => `<li><strong>${o.name}:</strong> ${o.desc}</li>`).join('')}</ul>`;
+            
+            button.addEventListener('click', () => {
+                const isHidden = content.classList.contains('hidden');
+                document.querySelectorAll('.meal-accordion-content').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.meal-accordion-button svg').forEach(svg => svg.classList.remove('rotate-180'));
+                
+                if (isHidden) {
+                    content.classList.remove('hidden');
+                    button.querySelector('svg').classList.add('rotate-180');
+                }
+            });
+            button.classList.add('meal-accordion-button');
+            content.classList.add('meal-accordion-content');
+
+            accordionItem.appendChild(button);
+            accordionItem.appendChild(content);
+            mealAccordion.appendChild(accordionItem);
+        });
+
+        card.appendChild(mealAccordion);
+        planContainer.appendChild(card);
+    }
+
+
+    function populateDailyPlan() {
+        const today = new Date().getDay();
+        const dailyPlanContainer = document.getElementById('daily-plan-container');
+        dailyPlanContainer.innerHTML = '';
+        
+        const plan = dailyPlan[today];
+
+        if (plan.morning === 'Rutina de Pilates') {
+            createExerciseCard('Rutina Matutina: Pilates', '5:00 AM (15-20 min)', pilatesRoutine, dailyPlanContainer);
+        } else {
+            createActivityCard('Rutina Matutina: Descanso Activo', 'Estiramientos suaves o yoga restaurativo.', dailyPlanContainer);
+        }
+
+        createActivityCard('Actividad Diaria', plan.activity, dailyPlanContainer);
+        
+        if (plan.evening === 'Rutina de Fuerza y Cardio') {
+            createExerciseCard('Rutina Vespertina: Fuerza y Cardio', 'Después del trabajo (30-45 min)', strengthRoutine, dailyPlanContainer);
+        }
+        
+        createMealPlanCard(dailyPlanContainer);
+    }
+
+    function populateWeeklySchedule() {
+        const scheduleBody = document.getElementById('weekly-schedule-body');
+        scheduleBody.innerHTML = '';
+        Object.values(dailyPlan).forEach(plan => {
+            const row = document.createElement('tr');
+            row.className = 'bg-white border-b hover:bg-blue-50';
+            row.innerHTML = `
+                <td class="px-6 py-4 font-semibold text-blue-900">${plan.day}</td>
+                <td class="px-6 py-4">${plan.morning}</td>
+                <td class="px-6 py-4">${plan.activity}</td>
+                <td class="px-6 py-4">${plan.evening || 'Descanso'}</td>
+                <td class="px-6 py-4">${plan.focus}</td>
+            `;
+            scheduleBody.appendChild(row);
+        });
+    }
+
+    function populateMealAccordion() {
+        const accordionContainer = document.getElementById('meal-accordion');
+        accordionContainer.innerHTML = '';
+        Object.entries(mealData).forEach(([mealType, options], index) => {
+             const item = document.createElement('div');
+             item.className = 'border-t border-stone-200 first:border-t-0';
+             item.innerHTML = `
+                <button class="accordion-button w-full flex justify-between items-center p-4 text-left font-semibold text-blue-800 hover:bg-blue-50 focus:outline-none">
+                    <span>${mealType}</span>
+                    <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="accordion-content hidden p-4 pt-0 text-sm text-stone-600">
+                    <ul class="space-y-2 list-disc list-inside">
+                        ${options.map(o => `<li><strong>${o.name}:</strong> ${o.desc}</li>`).join('')}
+                    </ul>
+                </div>
+             `;
+             accordionContainer.appendChild(item);
+        });
+    }
+
+    function populateWellnessAccordion() {
+        const accordionContainer = document.getElementById('wellness-accordion');
+        accordionContainer.innerHTML = '';
+        Object.entries(wellnessData).forEach(([title, items]) => {
+            const item = document.createElement('div');
+             item.className = 'border-t border-stone-200 first:border-t-0';
+             item.innerHTML = `
+                <button class="accordion-button w-full flex justify-between items-center p-4 text-left font-semibold text-blue-800 hover:bg-blue-50 focus:outline-none">
+                    <span>${title}</span>
+                    <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="accordion-content hidden p-4 pt-0 text-sm text-stone-600">
+                    <ul class="space-y-3">
+                        ${items.map(i => `<li><strong>${i.name}:</strong> ${i.desc}</li>`).join('')}
+                    </ul>
+                </div>
+             `;
+             accordionContainer.appendChild(item);
+        });
+    }
+
+    function initAccordions() {
+        document.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const svg = button.querySelector('svg');
+                content.classList.toggle('hidden');
+                svg.classList.toggle('rotate-180');
+            });
+        });
+    }
+    
+    function initModal() {
+        const modal = document.getElementById('exercise-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+
+        document.body.addEventListener('click', function(e) {
+            if (e.target.closest('.open-modal-button')) {
+                const button = e.target.closest('.open-modal-button');
+                const exerciseName = button.dataset.exercise;
+                const data = exerciseData[exerciseName];
+                if (data) {
+                    modalTitle.textContent = exerciseName;
+                    modalContent.innerHTML = `
+                        <p>${data.desc}</p>
+                        <p class="mt-4 text-sm font-semibold text-blue-800 bg-blue-50 p-2 rounded-md">Enfoque: ${data.focus}</p>
+                    `;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            }
+        });
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        closeModalButton.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    function createMacroChart() {
+        const ctx = document.getElementById('macroChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Carbohidratos', 'Proteínas', 'Grasas Saludables'],
+                datasets: [{
+                    label: 'Distribución de Macronutrientes',
+                    data: [45, 30, 25],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.7)', 
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(245, 158, 11, 0.7)'  
+                    ],
+                    borderColor: [
+                        '#ffffff'
+                    ],
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                           font: {
+                               size: 14
+                           }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    }
+
+    function createWeightChart() {
+        const ctx = document.getElementById('weightChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Inicio', 'Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+                datasets: [{
+                    label: 'Peso Proyectado (kg)',
+                    data: [80, 79.6, 79.2, 78.8, 78.4],
+                    fill: true,
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    tension: 0.2,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Peso (kg)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+    });
+
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 80) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').includes(current)) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    document.getElementById('today-date').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    populateDailyPlan();
+    populateWeeklySchedule();
+    populateMealAccordion();
+    populateWellnessAccordion();
+    initAccordions();
+    initModal();
+    createMacroChart();
+    createWeightChart();
+});
+</script>
+</body>
+</html>
